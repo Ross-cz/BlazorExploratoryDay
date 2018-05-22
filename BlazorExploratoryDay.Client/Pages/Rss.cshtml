@@ -1,0 +1,41 @@
+﻿@using BlazorWebApplication.Shared
+@page "/rss"
+@inject HttpClient Http
+
+<h1>RSS Feed</h1>
+
+@if (blogPosts == null)
+{
+<p><em>Loading...</em></p>
+}
+else
+{
+<table class='table'>
+	<thead>
+		<tr>
+			<th>Title</th>
+			<th>Published</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var post in blogPosts)
+            {
+				<tr>
+					<td>@post.Title</td>
+					<td>@post.Author (@post.Created.ToString("d"))</td>
+					<td>@post.Description</td>
+				</tr>
+            }
+	</tbody>
+</table>
+}
+
+@functions {
+    BlogPost[] blogPosts;
+
+    protected override async Task OnInitAsync()
+    {
+        blogPosts = await Http.GetJsonAsync<BlogPost[]>("/api/BlogPosts");
+    }
+}

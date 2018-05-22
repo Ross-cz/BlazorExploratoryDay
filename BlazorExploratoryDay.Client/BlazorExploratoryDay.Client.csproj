@@ -18,4 +18,16 @@
     <ProjectReference Include="..\BlazorExploratoryDay.Shared\BlazorExploratoryDay.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <BlazorGenerate Remove="Pages\Rss.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Pages\Rss.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\Rss.cshtml" />
+  </ItemGroup>
+
 </Project>
