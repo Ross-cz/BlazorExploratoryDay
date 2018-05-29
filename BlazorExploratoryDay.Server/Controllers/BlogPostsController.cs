@@ -3,38 +3,42 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
-using BlazorWebApplication.Shared;
+using BlazorExploratoryDay.Shared.Interfaces;
+using BlazorExploratoryDay.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.SyndicationFeed;
 using Microsoft.SyndicationFeed.Rss;
 
 namespace BlazorWebApplication.Server.Controllers
 {
-	public class BlogPostsController : Controller
+	public class BlogPostsController : Controller, IBlogPostsController
 	{
 		[Route("api/blogposts")]
-		public IEnumerable<BlogPost> GetBlogPosts()
+		public async Task<IEnumerable<BlogPost>> GetBlogPosts()
 		{
-			var xmlReader = XmlReader.Create("https://knowledge-base.havit.cz/feed/");
-			var rssReader = new RssFeedReader(xmlReader);
+			var xmlReader = Task.Run(() => XmlReader.Create("https://knowledge-base.havit.cz/feed/"));
+			var rssReader = new RssFeedReader(await xmlReader);
 
-			while (rssReader.Read().Result)
+			var blogPosts = new List<BlogPost>();
+			while (await rssReader.Read())
 			{
 				if (rssReader.ElementType == SyndicationElementType.Item)
 				{
-					var item = rssReader.ReadItem().Result;
-					yield return new BlogPost()
+					var item = await rssReader.ReadItem();
+
+					blogPosts.Add(new BlogPost()
 					{
 						Title = item.Title,
 						Author = item.Contributors.FirstOrDefault()?.Name,
 						Created = item.Published.LocalDateTime,
 						Description = item.Description,
 						Link = item.Links.FirstOrDefault()?.Uri.AbsoluteUri
-					};
+					});
 				}
 			}
 
-			yield break;
+			return blogPosts;
 		}
+
 	}
 }

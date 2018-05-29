@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BlazorWebApplication.Shared
+namespace BlazorExploratoryDay.Shared
 {
-    public class BlogPost
-    {
+	public class BlogPost
+	{
 		public string Title { get; set; }
 		public string Author { get; set; }
 		public DateTime Created { get; set; }

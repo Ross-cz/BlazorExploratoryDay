@@ -1,41 +1,43 @@
-﻿@using BlazorWebApplication.Shared
-@page "/rss"
-@inject HttpClient Http
+﻿@page "/rss"
+
+@using BlazorExploratoryDay.Shared
+@using BlazorExploratoryDay.Shared.Interfaces
+@inject IBlogPostsController data
 
 <h1>RSS Feed</h1>
 
 @if (blogPosts == null)
 {
-<p><em>Loading...</em></p>
+	<p><em>Loading...</em></p>
 }
 else
 {
-<table class='table'>
-	<thead>
-		<tr>
-			<th>Title</th>
-			<th>Published</th>
-			<th>Description</th>
-		</tr>
-	</thead>
-	<tbody>
-		@foreach (var post in blogPosts)
-            {
+	<table class='table'>
+		<thead>
+			<tr>
+				<th>Title</th>
+				<th>Published</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var post in blogPosts)
+			{
 				<tr>
 					<td>@post.Title</td>
 					<td>@post.Author (@post.Created.ToString("d"))</td>
 					<td>@post.Description</td>
 				</tr>
-            }
-	</tbody>
-</table>
+			}
+		</tbody>
+	</table>
 }
 
 @functions {
-    BlogPost[] blogPosts;
+	IEnumerable<BlogPost> blogPosts;
 
-    protected override async Task OnInitAsync()
-    {
-        blogPosts = await Http.GetJsonAsync<BlogPost[]>("/api/BlogPosts");
-    }
+	protected override async Task OnInitAsync()
+	{
+		blogPosts = await data.GetBlogPosts();
+	}
 }
